@@ -16,33 +16,40 @@ SKILLS = [
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    result = {}
-
     if request.method == "POST":
-        resume = request.files["resume"]
+        # 1. Get user inputs
+        resume_file = request.files["resume"]
         jd_text = request.form["jd"]
 
-        resume_path = os.path.join(app.config["UPLOAD_FOLDER"], resume.filename)
-        resume.save(resume_path)
+        # 2. Save resume
+        resume_path = os.path.join("uploads", resume_file.filename)
+        resume_file.save(resume_path)
 
+        # 3. Extract & clean text
         resume_text = extract_text_from_pdf(resume_path)
-        jd_clean = parse_job_description(jd_text)
+        jd_clean = clean_text(jd_text)
 
-        resume_skills = extract_skills(resume_text, SKILLS)
-        jd_skills = extract_skills(jd_clean, SKILLS)
+        # 4. Skill extraction
+        resume_skills = extract_skills(resume_text)
+        jd_skills = extract_skills(jd_clean)
 
-        matched_skills = resume_skills & jd_skills
-        missing_skills = jd_skills - resume_skills
+        matched = resume_skills.intersection(jd_skills)
+        missing = jd_skills.difference(resume_skills)
 
-        ats_score = calculate_ats_score(resume_text, jd_clean)
+        # 5. ATS Score
+        score = calculate_ats_score(resume_text, jd_clean)
 
-        result = {
-            "score": ats_score,
-            "matched": matched_skills,
-            "missing": missing_skills
-        }
+        # 6. Send data to UI
+        return render_template(
+            "index.html",
+            score=score,
+            matched=matched,
+            missing=missing
+        )
 
-    return render_template("index.html", result=result)
+    # For first page load
+    return render_template("index.html", score=None)
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
