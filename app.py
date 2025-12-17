@@ -1,11 +1,13 @@
-from flask import Flask, render_template, request
 import os
 
-from utils.resume_parser import extract_text_from_pdf
-from utils.jd_parser import parse_job_description
+UPLOAD_FOLDER = "uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+from flask import Flask, render_template, request
+
+from utils.resume_parser import extract_text_from_pdf, clean_text
 from utils.skill_extractor import extract_skills
 from utils.ats_scorer import calculate_ats_score
-
 app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = "uploads"
 
@@ -22,8 +24,9 @@ def index():
         jd_text = request.form["jd"]
 
         # 2. Save resume
-        resume_path = os.path.join("uploads", resume_file.filename)
+        resume_path = os.path.join(UPLOAD_FOLDER, resume_file.filename)
         resume_file.save(resume_path)
+
 
         # 3. Extract & clean text
         resume_text = extract_text_from_pdf(resume_path)
@@ -49,7 +52,6 @@ def index():
 
     # For first page load
     return render_template("index.html", score=None)
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
