@@ -38,5 +38,10 @@ def calculate_ats_score(resume_text, jd_text, matched_skills, jd_skills):
 
     # ---------- FINAL ATS SCORE ----------
     total_score = skill_score + similarity_score + keyword_score
+    return {
+    "final_score": round(total_score, 2),
+    "skill_score": round(skill_score, 2),
+    "similarity_score": round(similarity_score, 2),
+    "keyword_score": round(keyword_score, 2)
+}
 
-    return round(total_score, 2)

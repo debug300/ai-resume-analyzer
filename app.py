@@ -50,20 +50,22 @@ def index():
         missing = jd_skills - resume_skills
 
         # ---------- ATS Score ----------
-        score = calculate_ats_score(
-            resume_text,
-            jd_clean,
-            matched,
-            jd_skills
-        )
+       ats_result = calculate_ats_score(
+    resume_text,
+    jd_clean,
+    matched,
+    jd_skills
+)
 
-        return render_template(
-            "index.html",
-            score=score,
-            matched=matched,
-            missing=missing
-        )
-
+return render_template(
+    "index.html",
+    score=ats_result["final_score"],
+    skill_score=ats_result["skill_score"],
+    similarity_score=ats_result["similarity_score"],
+    keyword_score=ats_result["keyword_score"],
+    matched=matched,
+    missing=missing
+)
     return render_template("index.html", score=None)
 
 
