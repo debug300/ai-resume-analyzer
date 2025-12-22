@@ -1,5 +1,5 @@
 import re
-from PyPDF2 import PdfReader
+import pdfplumber
 
 
 def extract_text_from_pdf(pdf_path: str) -> str:
