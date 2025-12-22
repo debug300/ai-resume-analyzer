@@ -41,7 +41,13 @@ def index():
         matched = resume_skills & jd_skills
         missing = jd_skills - resume_skills
 
-        score = calculate_ats_score(resume_text, jd_clean)
+        score = calculate_ats_score(
+    resume_text,
+    jd_clean,
+    matched,
+    jd_skills
+)
+
 
         return render_template(
             "index.html",
