@@ -1,41 +1,23 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+def calculate_ats_score(resume_text, jd_text, matched_skills, jd_skills):
+    # --- TF-IDF Similarity ---
+    vectorizer = TfidfVectorizer(stop_words="english")
+    vectors = vectorizer.fit_transform([resume_text, jd_text])
+    tfidf_score = cosine_similarity(vectors[0:1], vectors[1:2])[0][0]
 
-def calculate_ats_score(
-    resume_text: str,
-    jd_text: str,
-    matched_skills: set,
-    jd_skills: set
-) -> float:
-    """
-    Hybrid ATS score:
-    60% Skill Match Score
-    40% Text Similarity Score (TF-IDF)
-    """
-
-    # ---------- 1. SKILL MATCH SCORE ----------
+    # --- Skill Match Ratio ---
     if len(jd_skills) == 0:
         skill_score = 0
     else:
-        skill_score = (len(matched_skills) / len(jd_skills)) * 100
+        skill_score = len(matched_skills) / len(jd_skills)
 
-    # ---------- 2. TEXT SIMILARITY SCORE ----------
-    vectorizer = TfidfVectorizer(
-        stop_words="english",
-        ngram_range=(1, 2),
-        max_df=0.85,
-        min_df=1
+    # --- Final Weighted ATS Score ---
+    final_score = (
+        0.45 * skill_score +     # skills matter most
+        0.35 * tfidf_score +     # semantic similarity
+        0.20 * min(skill_score * 1.2, 1.0)  # skill boost
     )
 
-    tfidf_matrix = vectorizer.fit_transform([resume_text, jd_text])
-    similarity = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])[0][0]
-    similarity_score = similarity * 100
-
-    # ---------- 3. FINAL HYBRID SCORE ----------
-    final_score = (0.6 * skill_score) + (0.4 * similarity_score)
-
-    # Clamp to 100
-    final_score = min(round(final_score, 2), 100.0)
-
-    return final_score
+    return round(final_score * 100, 2)
