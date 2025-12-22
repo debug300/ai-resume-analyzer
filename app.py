@@ -13,6 +13,11 @@ UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+SKILLS = [
+    "python", "java", "c", "c++", "sql", "flask", "django",
+    "machine learning", "git", "docker", "aws", "react"
+]
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():
