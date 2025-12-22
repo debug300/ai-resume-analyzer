@@ -25,5 +25,11 @@ if __name__ == "__main__":
     git experience required
     """
 
-    ats_score = calculate_ats_score(resume_text, jd_text)
+    score = calculate_ats_score(
+    resume_text,
+    jd_clean,
+    resume_skills,
+    jd_skills
+)
+
     print(f"ATS Match Score: {ats_score}%")

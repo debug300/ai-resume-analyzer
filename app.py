@@ -13,11 +13,6 @@ UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-SKILLS = [
-    "python", "java", "c", "c++", "sql", "flask", "django",
-    "machine learning", "git", "docker", "aws", "react"
-]
-
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -34,8 +29,8 @@ def index():
         resume_text = extract_text_from_pdf(resume_path)
         jd_clean = clean_text(jd_text)
 
-        resume_skills = extract_skills(resume_text, SKILLS)
-        jd_skills = extract_skills(jd_clean, SKILLS)
+        resume_skills = extract_skills(resume_text)
+        jd_skills = extract_skills(jd_clean)
 
 
         matched = resume_skills & jd_skills
