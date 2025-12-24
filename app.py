@@ -1,3 +1,7 @@
+CORE_SKILLS = ["java", "spring boot", "sql"]
+IMPORTANT_SKILLS = ["git", "aws", "docker"]
+OPTIONAL_SKILLS = ["kubernetes", "microservices", "ci cd"]
+
 import os
 from flask import Flask, render_template, request
 
